@@ -545,7 +545,13 @@ void jaiabot::apps::BotPidControl::handle_engineering_command(const jaiabot::pro
         if (depth.has_target())
         {
             setThrottleMode(PID_DEPTH);
-            target_depth_ = depth.target();
+
+            // If the depth target has changed, reset the I term, so bot doesn't grind motor against seafloor.
+            if (target_depth_ != depth.target())
+            {
+                throttle_depth_pid_->reset_iterm();
+                target_depth_ = depth.target();
+            }
         }
 
         if (depth.has_kp())
