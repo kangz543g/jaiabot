@@ -18,6 +18,7 @@ message LowControl
     ];
 
     optional ControlSurfaces control_surfaces = 6;
+    optional bool test_mode = 7;
 }
 
 message LowControlAck

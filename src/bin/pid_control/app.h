@@ -83,6 +83,7 @@ class BotPidControl : public goby::zeromq::MultiThreadApplication<config::BotPid
     Pid* pitch_pid_;
 
     jaiabot::protobuf::LowControl cmd_msg_;
+    bool test_mode_ = false;
     std::atomic<int> id_;
 
     jaiabot::protobuf::Bounds bounds_;

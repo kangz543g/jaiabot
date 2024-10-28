@@ -20,12 +20,16 @@
 // You should have received a copy of the GNU General Public License
 // along with the Jaia Binaries.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "goby/util/sci.h" // for linear_interpolate
+#include <algorithm>
 #include <boost/units/io.hpp>
 #include <goby/middleware/io/udp_point_to_point.h>
-#include "goby/util/sci.h" // for linear_interpolate
+#include <vector>
 
-#include "jaiabot/messages/motor.pb.h"
 #include "jaiabot/messages/arduino.pb.h"
+#include "jaiabot/messages/low_control.pb.h"
+#include "jaiabot/messages/motor.pb.h"
+#include "jaiabot/messages/production.pb.h"
 
 #include "system_thread.h"
 
@@ -91,6 +95,28 @@ jaiabot::apps::MotorStatusThread::MotorStatusThread(
                     // motor is off
                     status_.set_rpm(0);
                 }
+
+                if (is_motor_test_)
+                {
+                    rpm_test_values_.push_back(status_.rpm());
+                }
+            }
+
+            if (arduino_response.has_vcccurrent() && is_motor_test_)
+            {
+                vcc_current_test_values_.push_back(arduino_response.vcccurrent());
+            }
+        });
+
+    interprocess().subscribe<jaiabot::groups::low_control>(
+        [this](const jaiabot::protobuf::LowControl& low_control) {
+            if (low_control.test_mode())
+            {
+                is_motor_test_ = true;
+            }
+            else if (is_motor_test_ && !low_control.test_mode())
+            {
+                terminate_motor_test();
             }
         });
 }
@@ -135,4 +161,53 @@ void jaiabot::apps::MotorStatusThread::health(goby::middleware::protobuf::Thread
     }
 
     health.set_state(health_state);
+}
+
+void discard_vector_ends(std::vector<double>& vector, int discard_size)
+{
+    vector.erase(vector.begin(), vector.begin() + discard_size);
+    vector.erase(vector.end() - discard_size, vector.end());
+}
+
+double calculate_median(std::vector<double> vector)
+{
+    int size = vector.size();
+
+    std::sort(vector.begin(), vector.end());
+
+    // vector size is odd, take the midpoint
+    if (size % 2 != 0)
+    {
+        return vector[size / 2];
+    }
+    // vector size is even, take the average of the two middle points
+    else
+    {
+        return (vector[size / 2] + vector[size / 2 - 1]) / 2.0;
+    }
+}
+
+void jaiabot::apps::MotorStatusThread::terminate_motor_test()
+{
+    // data points to be removed from each end of the vector
+    const int discard_size = 3;
+
+    discard_vector_ends(rpm_test_values_, discard_size);
+    discard_vector_ends(vcc_current_test_values_, discard_size);
+
+    double median_rpm = calculate_median(rpm_test_values_);
+    double max_vcc_current =
+        *std::max_element(vcc_current_test_values_.begin(), vcc_current_test_values_.end());
+    motor_test_count_ += 1;
+
+    jaiabot::protobuf::MotorTest motor_test_msg;
+    motor_test_msg.set_test_count(motor_test_count_);
+    motor_test_msg.set_median_rpm(median_rpm);
+    motor_test_msg.set_max_vcc_current(max_vcc_current);
+
+    interprocess().publish<jaiabot::groups::production>(motor_test_msg);
+
+    is_motor_test_ = false;
+    rpm_test_values_.clear();
+    vcc_current_test_values_.clear();
 }

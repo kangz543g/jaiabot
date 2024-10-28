@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+package jaiabot.protobuf;
+
+message MotorTest {
+    optional int32 test_count = 1;
+    optional double median_rpm = 2;
+    optional double max_vcc_current = 3;
+}

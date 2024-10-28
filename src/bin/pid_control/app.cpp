@@ -433,6 +433,7 @@ void jaiabot::apps::BotPidControl::publish_low_control()
                                << static_cast<goby::time::SITime>(timeout_).value() << " seconds."
                                << std::endl;
         lastCommandReceived_ = 0;
+        test_mode_ = false;
 
         all_stop();
     }
@@ -441,6 +442,7 @@ void jaiabot::apps::BotPidControl::publish_low_control()
     cmd_msg_.set_id(id_++);
     cmd_msg_.set_vehicle(1); // Set this to correct value?
     cmd_msg_.set_time_with_units(goby::time::SystemClock::now<goby::time::MicroTime>());
+    cmd_msg_.set_test_mode(test_mode_);
 
     auto& control_surfaces = *cmd_msg_.mutable_control_surfaces();
     control_surfaces.set_timeout(static_cast<goby::time::SITime>(timeout_).value());
@@ -646,6 +648,11 @@ void jaiabot::apps::BotPidControl::handle_engineering_command(const jaiabot::pro
     if (command.has_led_switch_on())
     {
         led_switch_on = command.led_switch_on();
+    }
+
+    if (command.has_test_mode())
+    {
+        test_mode_ = command.test_mode();
     }
 
     publish_low_control();

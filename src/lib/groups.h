@@ -112,6 +112,9 @@ constexpr goby::middleware::Group intervehicle_subscribe_request{
 // simulator
 constexpr goby::middleware::Group simulator_command{"jaiabot::simulator_command"};
 
+// production
+constexpr goby::middleware::Group production{"jaiabot::production"};
+
 } // namespace groups
 } // namespace jaiabot
 

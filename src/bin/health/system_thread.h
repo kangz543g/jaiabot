@@ -125,12 +125,17 @@ class MotorStatusThread : public HealthMonitorThread<jaiabot::config::MotorStatu
     void issue_status_summary() override;
     void health(goby::middleware::protobuf::ThreadHealth& health) override;
     void send_rpm_query();
+    void terminate_motor_test();
 
   private:
     jaiabot::protobuf::Motor status_;
     goby::time::SteadyClock::time_point last_motor_rpm_report_time_{std::chrono::seconds(0)};
     goby::time::SteadyClock::time_point last_motor_thermistor_report_time_{std::chrono::seconds(0)};
     double rpm_value_{0};
+    bool is_motor_test_{false};
+    int32_t motor_test_count_{0};
+    std::vector<double> rpm_test_values_;
+    std::vector<double> vcc_current_test_values_;
 
     // Original and extended map of resistance (Ohms) to temperature (°F)
     std::map<float, float> resistance_to_temperature_ = {
