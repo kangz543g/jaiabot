@@ -462,9 +462,9 @@ jaiabot::apps::MissionManager::MissionManager()
 
             if (motor_data.has_rpm())
             {
-                double motor = motor_data.rpm();
+                double rpm = motor_data.rpm();
                 statechart::EvVehicleMotorStatus ev;
-                ev.motor = motor;
+                ev.rpm = rpm;
                 machine_->process_event(ev);
             }
         });

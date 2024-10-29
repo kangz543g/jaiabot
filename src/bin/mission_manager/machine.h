@@ -1673,6 +1673,7 @@ struct PoweredDescent
     bool is_initial_depth_reading_{true};
     goby::time::MicroTime last_motor_rpm_time_{
         goby::time::SystemClock::now<goby::time::MicroTime>()};
+    int motor_rpm_false_dive_check_incr_{0};
 };
 
 struct Hold

@@ -129,3 +129,12 @@ message ArduinoSimThread
     optional double voltage_start = 3 [default = 24.0];
     optional double reset_voltage_level = 4 [default = 15.0];
 }
+
+message MotorSimThread
+{
+    option (dccl.msg) = {
+        unit_system: "si"
+    };
+
+    optional double rpm = 1 [default = 1200];
+}

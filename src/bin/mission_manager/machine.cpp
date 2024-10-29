@@ -796,20 +796,25 @@ void jaiabot::statechart::inmission::underway::task::dive::PoweredDescent::motor
 {
     auto now = goby::time::SystemClock::now<goby::time::MicroTime>();
 
-    if (std::abs(ev.rpm.value()) < cfg().pitch_to_determine_false_dive())
+    auto detect_cfg = cfg().detect_false_dive();
+
+    if (std::abs(ev.rpm) < detect_cfg.motor_rpm_to_determine_false_dive())
     {
         // Check the min check time has been reach to determine if a bot is false diving
-        if (((now - last_motor_rpm_time_) >=
-             static_cast<decltype(now)>(cfg().motor_rpm_min_check_time_with_units())))
+        if (((motor_rpm_false_dive_check_incr_ >= (detect_cfg.motor_rpm_false_dives_checks() - 1)) &&
+            (now - last_motor_rpm_time_) >=
+             static_cast<decltype(now)>(detect_cfg.motor_rpm_min_check_time_with_units())))
         {
             glog.is_warn() && glog << "PoweredDescent::motor_status Bot is false diving!" << std::endl;
             context<Dive>().dive_packet().set_false_dive(true);
             post_event(EvFalseDiveAbort());
         }
+        motor_rpm_false_dive_check_incr_++;
     }
     else
     {
         last_motor_rpm_time_ = now;
+        motor_rpm_false_dive_check_incr_ = 0;
     }
 
 }

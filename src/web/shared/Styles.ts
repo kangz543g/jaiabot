@@ -72,6 +72,7 @@ const editColor = "gold";
 const remoteControlledColor = "mediumpurple";
 const driftArrowColor = "darkorange";
 const disconnectedColor = "gray";
+const errorColor = "Rebellion Red";
 
 const DEG = Math.PI / 180;
 const SELECTED_Z_INDEX = 990; // Needs to be larger than the number of runs created in a session (determines increment) otherwise unselected features would have a higher z-index than selected features
@@ -677,7 +678,13 @@ export function divePacketIconStyle(feature: Feature, animatedColor?: string) {
     }
 
     // Icon color
-    const color = animatedColor ? animatedColor : "white";
+    let color = defaultColor;
+
+    if (feature.get("falseDive")) {
+        color = errorColor
+    } else if (animatedColor) {
+        color = animatedColor
+    }
 
     return new Style({
         image: new Icon({

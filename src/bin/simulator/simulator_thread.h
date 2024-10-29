@@ -72,6 +72,19 @@ class ArduinoSimThread : public SimulatorThread<jaiabot::config::ArduinoSimThrea
     goby::time::SteadyClock::time_point voltage_updated_{std::chrono::seconds(0)};
 };
 
+class MotorSimThread : public SimulatorThread<jaiabot::config::MotorSimThread>
+{
+  public:
+    MotorSimThread(const jaiabot::config::ArduinoSimThread& cfg);
+    ~MotorSimThread() {}
+
+  private:
+    void loop() override;
+
+  private:
+    double rpm_{1200};
+};
+
 } // namespace apps
 } // namespace jaiabot
 
