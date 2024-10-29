@@ -786,6 +786,34 @@ void jaiabot::statechart::inmission::underway::task::dive::PoweredDescent::depth
              << std::endl;
 }
 
+/**
+ * @brief Executes when the bot receives a new motor status reading
+ * 
+ * @param ev Motor status event used to pass the new motor status reading
+ */
+void jaiabot::statechart::inmission::underway::task::dive::PoweredDescent::motor_status(
+    const EvVehicleMotorStatus& ev)
+{
+    auto now = goby::time::SystemClock::now<goby::time::MicroTime>();
+
+    if (std::abs(ev.rpm.value()) < cfg().pitch_to_determine_false_dive())
+    {
+        // Check the min check time has been reach to determine if a bot is false diving
+        if (((now - last_motor_rpm_time_) >=
+             static_cast<decltype(now)>(cfg().motor_rpm_min_check_time_with_units())))
+        {
+            glog.is_warn() && glog << "PoweredDescent::motor_status Bot is false diving!" << std::endl;
+            context<Dive>().dive_packet().set_false_dive(true);
+            post_event(EvFalseDiveAbort());
+        }
+    }
+    else
+    {
+        last_motor_rpm_time_ = now;
+    }
+
+}
+
 // Task::Dive::Hold
 jaiabot::statechart::inmission::underway::task::dive::Hold::Hold(typename StateBase::my_context c)
     : StateBase(c), measurement_(*context<Dive>().dive_packet().add_measurement())
