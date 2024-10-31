@@ -680,9 +680,9 @@ export function divePacketIconStyle(feature: Feature, animatedColor?: string) {
 
     if (feature.get("falseDive")) {
         color = errorColor;
-    } else if (animatedColor) {
-        color = animatedColor;
     }
+
+    color = animatedColor ? animatedColor : color;
 
     return new Style({
         image: new Icon({

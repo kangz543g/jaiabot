@@ -41,7 +41,7 @@ sample { depth: 40 temperature: 7 salinity: 26 }
 sample { depth: 50 temperature: 6 salinity: 26 }
 
 # seafloor depth
-seafloor_depth: 3
+seafloor_depth: 15
 seafloor_wavelength: 100
 seafloor_amplitude: 5
 

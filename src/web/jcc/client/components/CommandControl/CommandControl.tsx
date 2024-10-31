@@ -2540,7 +2540,7 @@ export default class CommandControl extends React.Component {
             feature.get("type") === "dive" ? divePacketIconStyle : driftPacketIconStyle;
 
         if (feature.get("animated")) {
-            feature.setStyle(styleFunction(feature, "white"));
+            feature.setStyle(styleFunction(feature));
         } else {
             feature.setStyle(styleFunction(feature, "black"));
         }
@@ -2558,7 +2558,7 @@ export default class CommandControl extends React.Component {
                 feature.set("selected", false);
                 // Reset style
                 const styleFunction = type === "dive" ? divePacketIconStyle : driftPacketIconStyle;
-                feature.setStyle(styleFunction(feature, "white"));
+                feature.setStyle(styleFunction(feature));
             }
         }
         clearInterval(this.state.taskPacketIntervalId);
