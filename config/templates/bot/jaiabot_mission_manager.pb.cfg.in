@@ -124,9 +124,9 @@ resolve_no_forward_progress {
 }
 
 detect_false_dive {
-    motor_rpm_false_dives_checks: 1 # (default = 5) - the number of rpms in a row under threshold to determine false dive
+    motor_rpm_false_dives_checks: 5 # (default = 5) - the number of rpms in a row under threshold to determine false dive
 
-    motor_rpm_min_check_time: 1 # (dafault = 2) - the min amount of time to trigger a EvFalseDiveAbort event
+    motor_rpm_min_check_time: 2 # (dafault = 2) - the min amount of time to trigger a EvFalseDiveAbort event
 
     motor_rpm_to_determine_false_dive: 1300 # (default = 1300) - the rpm threshold to determine false dive
 }

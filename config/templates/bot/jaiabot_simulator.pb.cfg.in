@@ -63,7 +63,7 @@ arduino_config {
 
 # Motor
 motor_config {
-    rpm: 900 # (default = 1300)
+    rpm: 1300 # (default = 1300)
 }
 
 minimum_thrust: 1  #  normalized 0-100

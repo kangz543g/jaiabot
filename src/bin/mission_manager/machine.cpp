@@ -722,7 +722,7 @@ void jaiabot::statechart::inmission::underway::task::dive::PoweredDescent::depth
 
     if (context<Dive>().dive_packet().false_dive())
     {
-        context<Dive>().dive_packet().set_depth_achieved(ev.depth);
+        context<Dive>().dive_packet().set_depth_achieved_with_units(ev.depth);
         post_event(EvFalseDiveAbort());
     }
 
@@ -806,7 +806,9 @@ void jaiabot::statechart::inmission::underway::task::dive::PoweredDescent::motor
 
     if (std::abs(ev.rpm) < detect_cfg.motor_rpm_to_determine_false_dive())
     {
-        // Check the min check time has been reach to determine if a bot is false diving
+        // Check the min check time has been reached and
+        // the number of checks has been reached
+        // to determine if a bot is false diving
         if (((motor_rpm_false_dive_check_incr_ >= (detect_cfg.motor_rpm_false_dives_checks() - 1)) &&
             (now - last_motor_rpm_time_) >=
              static_cast<decltype(now)>(detect_cfg.motor_rpm_min_check_time_with_units())))
