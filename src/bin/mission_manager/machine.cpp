@@ -720,6 +720,12 @@ void jaiabot::statechart::inmission::underway::task::dive::PoweredDescent::depth
         is_bot_diving_ = true;
     }
 
+    if (context<Dive>().dive_packet().false_dive())
+    {
+        context<Dive>().dive_packet().set_depth_achieved(ev.depth);
+        post_event(EvFalseDiveAbort());
+    }
+
     // Check if our initial timeout has been reached to detect bottom
     // or if the bot is diving.
     if (current_clock >= detect_bottom_logic_timeout_ || is_bot_diving_)
@@ -807,7 +813,6 @@ void jaiabot::statechart::inmission::underway::task::dive::PoweredDescent::motor
         {
             glog.is_warn() && glog << "PoweredDescent::motor_status Bot is false diving!" << std::endl;
             context<Dive>().dive_packet().set_false_dive(true);
-            post_event(EvFalseDiveAbort());
         }
         motor_rpm_false_dive_check_incr_++;
     }

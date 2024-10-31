@@ -116,6 +116,8 @@ message Simulator
     optional string hub_gpsd_device = 43;
 
     optional ArduinoSimThread arduino_config = 60;
+
+    optional MotorSimThread motor_config = 61;
 }
 
 message ArduinoSimThread
@@ -136,5 +138,5 @@ message MotorSimThread
         unit_system: "si"
     };
 
-    optional double rpm = 1 [default = 1200];
+    optional int32 rpm = 1 [default = 1300];
 }

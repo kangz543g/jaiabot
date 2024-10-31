@@ -2233,6 +2233,7 @@ export default class CommandControl extends React.Component {
                     depth_achieved: { value: diveFeature.get("depthAchieved"), units: "m" },
                     dive_rate: { value: diveFeature.get("diveRate"), units: "m/s" },
                     bottom_dive: { value: diveFeature.get("bottomDive") ? "Yes" : "No", units: "" },
+                    false_dive: { value: diveFeature.get("falseDive") ? "Yes" : "No", units: "" },
                     start_time: { value: startTime.toLocaleString(), units: "" },
                     end_time: { value: endTime.toLocaleString(), units: "" },
                 };

@@ -1652,6 +1652,8 @@ struct PoweredDescent
         boost::statechart::in_state_reaction<EvLoop, PoweredDescent, &PoweredDescent::loop>,
         boost::statechart::in_state_reaction<EvVehicleDepth, PoweredDescent,
                                              &PoweredDescent::depth>,
+        boost::statechart::in_state_reaction<EvVehicleMotorStatus, PoweredDescent,
+                                             &PoweredDescent::motor_status>,
         boost::statechart::transition<EvPowerDescentSafety, UnpoweredAscent>,
         boost::statechart::transition<EvFalseDiveAbort, UnpoweredAscent>>;
 
