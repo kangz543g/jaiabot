@@ -192,6 +192,14 @@ void jaiabot::apps::MotorStatusThread::terminate_motor_test()
     // data points to be removed from each end of the vector
     const int discard_size = 3;
 
+    // multiply by two to account for both ends of the vector
+    if (discard_size * 2 >= rpm_test_values_.size() ||
+        discard_size * 2 >= vcc_current_test_values_.size())
+    {
+        glog.is_warn() && glog << "Motor test vector is too small to discard ends" << std::endl;
+        return;
+    }
+
     discard_vector_ends(rpm_test_values_, discard_size);
     discard_vector_ends(vcc_current_test_values_, discard_size);
 
