@@ -123,7 +123,7 @@ jaiabot::apps::BotPidControl::BotPidControl()
     }
     throttle_depth_pid_->set_auto();
     throttle_depth_pid_->set_direction(E_PID_REVERSE);
-    throttle_depth_pid_->set_limits(-100.0, -THROTTLE_FOR_ZERO_NET_BUOYANCY);
+    throttle_depth_pid_->set_limits(-100.0 - THROTTLE_FOR_ZERO_NET_BUOYANCY, 0.0);
 
     if (cfg().has_heading_pid_gains())
     {
@@ -544,14 +544,7 @@ void jaiabot::apps::BotPidControl::handle_engineering_command(const jaiabot::pro
 
         if (depth.has_target())
         {
-            setThrottleMode(PID_DEPTH);
-
-            // If the depth target has changed, reset the I term, so bot doesn't grind motor against seafloor.
-            if (target_depth_ != depth.target())
-            {
-                throttle_depth_pid_->reset_iterm();
-                target_depth_ = depth.target();
-            }
+            set_target_depth(depth.target());
         }
 
         if (depth.has_kp())
@@ -747,8 +740,7 @@ void jaiabot::apps::BotPidControl::handle_dive_depth(
     // Depth PID for dive
     if (command.has_dive_depth())
     {
-        setThrottleMode(PID_DEPTH);
-        target_depth_ = command.dive_depth();
+        set_target_depth(command.dive_depth());
     }
     else if (bounds_.motor().has_throttle_dive())
     {
